@@ -9,6 +9,8 @@ Sequencing- and Metadata Uploader for the National genomics platform (NGP)
 
 ## Installation
 
+Edit keyfile.json to reflect your aws access details
+
 ### Just the package
 
 pip install .

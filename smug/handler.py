@@ -5,16 +5,31 @@ import json
 import os
 import re
 
+from hcp import HCPManager
 from smug import log, WD,TIMESTAMP
 
 #!/usr/bin/env python
 
 class Handler:
-    def __init__(self):
-        pass
+    def __init__(self, kf):
+        self.endpoint = ""
+        self.aws_access_key_id = ""
+        self.aws_secret_access_key = ""
+        self.hcpm = self.init_hcpm(kf)
+
+    def init_hcpm(self, kf):
+        t = json.loads(kf)
+        self.endpoint = t["endpoint"]
+        self.aws_access_key_id = t["aws_access_key_id"]
+        self.aws_secret_access_key = t["aws_secret_access_key"]
+        hcpm = HCPManager(endpoint, aws_access_key_id, aws_secret_access_key)
+        return hpcm
+
+    def upload_file(self,fn):
+        hcpm.upload_file(fn, self.aws_secret_access_key)
+        log.debug("Uploaded {} to HCP".format(fn))
 
     def verify_fastq_suffix(self, fn):
-
         #Check suffix
         hit = re.search("fastq.gz$",fn)
         if not hit:
