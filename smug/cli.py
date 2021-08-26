@@ -1,6 +1,7 @@
 """
 
 """
+import os 
 
 from smug import version, log, WD, TIMESTAMP
 from smug.handler import Handler
@@ -20,12 +21,15 @@ import click
 def root(ctx, folder, meta, dry, parentfolder, tag):
     """NGP File uploader"""
     ctx.obj = {}
-
     handler=Handler()
-    handler.verify_fastq(folder)
-    handler.gen_metadata(folder, tag)
-    #Add logger
-    #generate metadata file
-    #check that all files contain fasta
-    #add folder function
-    #add folder of folder function
+
+    #Recursively loop over all folders
+    for root, dirs, files in os.walk(folder):
+        log.debug("{} {} {}".format(root,dirs,files))
+        for f in files:
+            try:
+                handler.verify_fastq_suffix(os.path.join(root,f))
+                handler.verify_fastq_contents(os.path.join(root,f))
+                handler.gen_metadata(os.path.join(root,f), tag)
+            except Exception as e:
+                log.debug("{} is not a valid upload file".format(f))

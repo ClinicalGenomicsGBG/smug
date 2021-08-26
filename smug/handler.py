@@ -2,6 +2,7 @@
 """
 
 import json
+import os
 import re
 
 from smug import log, WD,TIMESTAMP
@@ -12,13 +13,15 @@ class Handler:
     def __init__(self):
         pass
 
-    def verify_fastq(self, fn):
+    def verify_fastq_suffix(self, fn):
+
         #Check suffix
         hit = re.search("fastq.gz$",fn)
         if not hit:
             raise Exception("File {0} is not a zipped fastq".format(fn))
         log.debug('Verified that {0} is a zipped fastq'.format(fn))
  
+    def verify_fastq_contents(self, fn):
         #Check contents
         nuc = set("ATCG\n")
         lineno = 0
@@ -43,7 +46,7 @@ class Handler:
     def gen_metadata(self, fn, tag):
         mdict = dict()
         mdict[fn] = {'tag':tag}
-        md = open("meta-{}.json".format(TIMESTAMP), "a")
+        md = open("{}/meta-{}.json".format(os.getcwd(), TIMESTAMP), "a")
         md.write(json.dumps(mdict, indent=4))
         md.close()
-        log.debug('Generated metadata file meta-{}.json'.format(TIMESTAMP)) 
+        log.debug('Generated metadata file {}/meta-{}.json'.format(os.getcwd(),TIMESTAMP)) 
